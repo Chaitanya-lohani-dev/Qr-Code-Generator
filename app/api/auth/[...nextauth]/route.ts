@@ -1,24 +1,6 @@
 // app/api/auth/[...nextauth]/route.ts
-import NextAuth from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import { PrismaClient } from "@prisma/client"
-
-const prisma = new PrismaClient()
-
-export const authOptions = {
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-  ],
-  // Aap custom pages bhi define kar sakte hain
-  // pages: {
-  //   signIn: '/auth/signin',
-  // }
-}
+import NextAuth from "next-auth";
+import { authOptions } from "../../../lib/auth"; // Nayi file se import karein
 
 const handler = NextAuth(authOptions);
 

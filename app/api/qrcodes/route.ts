@@ -2,7 +2,7 @@
 import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
 import prisma from "../../lib/prisma";
-import { authOptions } from "../../api/auth/[...nextauth]/route"; // Import authOptions
+import { authOptions } from "../../lib/auth"; // Nayi file se import karein
 
 // Apne saare QR codes get karne ke liye
 export async function GET() {
@@ -10,7 +10,7 @@ export async function GET() {
     if (!session?.user?.email) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
+    // ... baaki ka code waisa hi rahega
     try {
         const qrCodes = await prisma.qRCode.findMany({
             where: { user: { email: session.user.email } },
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     if (!session?.user?.email) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
+    // ... baaki ka code waisa hi rahega
     try {
         const { url, name } = await request.json();
 
