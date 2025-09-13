@@ -8,7 +8,6 @@ import {
   QrCodeIcon,
   ClipboardDocumentIcon,
   CheckIcon,
-  LinkIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import Head from 'next/head';
