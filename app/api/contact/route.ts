@@ -73,8 +73,8 @@ export async function POST(request: Request) {
       success: true,
       message: "Message sent successfully!",
     });
-  } catch (error: any) {
-    console.error("API Route Error:", error);
+  } catch (error) {
+    console.error("API Route Error:", error instanceof Error ? error.message : error);
     return NextResponse.json(
       { error: "An unexpected error occurred. Please try again later." },
       { status: 500 }
