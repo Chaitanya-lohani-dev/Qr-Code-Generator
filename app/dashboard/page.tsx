@@ -1,162 +1,279 @@
-// app/dashboard/page.tsx
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { useSession, signIn, signOut } from 'next-auth/react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useUser } from '@clerk/nextjs';
 import QRCode from 'qrcode';
-import Image from 'next/image'; // Next.js Image component import karein
+import Image from 'next/image';
+import {
+  QrCodeIcon,
+  ClipboardDocumentIcon,
+  CheckIcon,
+  LinkIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
+import Head from 'next/head';
 
-// QR Code ka type define karein
-interface QRCodeData {
-    id: string;
-    url: string;
-    name: string;
-    createdAt: string;
-}
+type QRRecord = {
+  id: string;
+  url: string;
+  name: string;
+  createdAt?: string;
+  qrCodeImage?: string;
+};
 
-interface DisplayQRCode extends QRCodeData {
-    qrCodeImage?: string;
-}
+export default function DashboardPage() {
+  const { user, isLoaded } = useUser();
+  const [url, setUrl] = useState('');
+  const [name, setName] = useState('');
+  const [generatedQR, setGeneratedQR] = useState<QRRecord | null>(null);
+  const [pastQRs, setPastQRs] = useState<QRRecord[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingList, setIsFetchingList] = useState(false);
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-export default function Dashboard() {
-    const { data: session, status } = useSession();
-    const [url, setUrl] = useState('');
-    const [name, setName] = useState('');
-    const [generatedQR, setGeneratedQR] = useState<DisplayQRCode | null>(null);
-    const [pastQRs, setPastQRs] = useState<DisplayQRCode[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+  function isValidHttpUrl(candidate: string) {
+    try {
+      const parsed = new URL(candidate);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }
 
-    // --- useEffect WARNING THEEK KIYA GAYA ---
-    // User ke purane QR Codes fetch karna
-    const fetchPastQRs = useCallback(async () => {
-        if (status !== 'authenticated') return;
-        try {
-            const response = await fetch('/api/qrcodes');
-            if (response.ok) {
-                const data: QRCodeData[] = await response.json();
-                const qrsWithImages = await Promise.all(
-                    data.map(async (qr) => {
-                        const qrCodeImage = await QRCode.toDataURL(qr.url, { width: 256, margin: 2 });
-                        return { ...qr, qrCodeImage };
-                    })
-                );
-                setPastQRs(qrsWithImages);
-            }
-        } catch (error) {
-            console.error("Failed to fetch QR codes:", error);
-        }
-    }, [status]);
+  const clearMessages = () => {
+    setErrorMessage(null);
+    setSuccessMessage(null);
+  };
 
-    useEffect(() => {
-        fetchPastQRs();
-    }, [fetchPastQRs]);
+  const fetchPastQRs = useCallback(async () => {
+    setIsFetchingList(true);
+    try {
+      const res = await fetch('/api/qrcodes', { method: 'GET' });
+      if (!res.ok) {
+        setErrorMessage('Failed to load QR codes.');
+        setIsFetchingList(false);
+        return;
+      }
+      const data: QRRecord[] = await res.json();
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!url || !name) {
-            alert('Please enter both URL and a name.');
-            return;
-        }
-        setIsLoading(true);
-        try {
-            const response = await fetch('/api/qrcodes', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url, name }),
-            });
+      // Generate QR images for each record
+      const withImages = await Promise.all(
+        data.map(async (qr) => {
+          try {
+            const img = await QRCode.toDataURL(qr.url, { width: 200, margin: 1 });
+            return { ...qr, qrCodeImage: img };
+          } catch {
+            return qr;
+          }
+        })
+      );
 
-            if (response.ok) {
-                const newQR: QRCodeData = await response.json();
-                const qrCodeImage = await QRCode.toDataURL(newQR.url, { width: 256, margin: 2 });
-                setGeneratedQR({ ...newQR, qrCodeImage });
-                await fetchPastQRs(); // List ko refresh karein
-                setUrl('');
-                setName('');
-            } else {
-                alert('Failed to generate QR code.');
-            }
-        } catch (error) {
-            console.error("Failed to create QR code:", error);
-        }
+      setPastQRs(withImages);
+    } catch (err) {
+      console.error('Fetch error:', err);
+      setErrorMessage('Network error while fetching QR codes.');
+    } finally {
+      setIsFetchingList(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) fetchPastQRs();
+  }, [isLoaded, fetchPastQRs]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    clearMessages();
+
+    if (!url.trim() || !name.trim()) {
+      setErrorMessage('Please enter both URL and name.');
+      return;
+    }
+    if (!isValidHttpUrl(url.trim())) {
+      setErrorMessage('Please enter a valid URL.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/qrcodes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, name }),
+      });
+
+      if (!res.ok) {
+        setErrorMessage('Failed to generate QR code.');
         setIsLoading(false);
-    };
+        return;
+      }
 
-    const handleDownload = () => {
-        if (!generatedQR || !generatedQR.qrCodeImage) return;
-        const link = document.createElement('a');
-        link.href = generatedQR.qrCodeImage;
-        link.download = `${generatedQR.name.replace(/\s+/g, '-')}-qrcode.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
+      const newQR: QRRecord = await res.json();
+      const img = await QRCode.toDataURL(newQR.url, { width: 400, margin: 1 });
+      const withImg = { ...newQR, qrCodeImage: img };
+      setGeneratedQR(withImg);
 
-    if (status === 'loading') {
-        return <p className="text-center mt-10">Loading...</p>;
+      await fetchPastQRs();
+      setUrl('');
+      setName('');
+      setSuccessMessage('QR code generated!');
+    } catch (err) {
+      setErrorMessage('Unexpected error.');
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    if (status === 'unauthenticated') {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-screen">
-                <h1 className="text-3xl mb-4">Please sign in to continue</h1>
-                <button onClick={() => signIn('google')} className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700">
-                    Sign in with Google
-                </button>
-            </div>
-        );
+  const handleCopy = async (link: string) => {
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopiedUrl(link);
+      setTimeout(() => setCopiedUrl(null), 2000);
+    } catch {
+      setErrorMessage('Failed to copy.');
     }
+  };
 
-    return (
-        <div className="container mx-auto p-4 md:p-8">
-            <div className="flex justify-between items-center mb-8">
-                <h1 className="text-2xl md:text-4xl font-bold">Welcome, {session?.user?.name}</h1>
-                <button onClick={() => signOut()} className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
-                    Sign Out
+  const handleDelete = async (id: string) => {
+    const ok = window.confirm('Delete this QR code?');
+    if (!ok) return;
+
+    try {
+      const res = await fetch('/api/qrcodes', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) {
+        setErrorMessage('Failed to delete.');
+        return;
+      }
+      setSuccessMessage('QR deleted.');
+      await fetchPastQRs();
+    } catch {
+      setErrorMessage('Error deleting QR.');
+    }
+  };
+
+  return (
+    <>
+      <Head>
+        <title>Dashboard • QRify</title>
+        <meta
+          name="description"
+          content="Manage your QR codes in QRify Dashboard. Create, download, and organize your QR library."
+        />
+      </Head>
+
+      <div className="m-0 pt-5 bg-slate-50 min-h-screen">
+        <div className="container mx-auto px-4 py-12">
+          <h1 className="text-3xl font-bold mb-6 text-slate-900">Welcome, {user?.firstName ?? 'User'} 👋</h1>
+
+          {errorMessage && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{errorMessage}</div>}
+          {successMessage && <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">{successMessage}</div>}
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Create QR */}
+            <div className="bg-white shadow rounded-lg p-6">
+              <h2 className="text-xl font-semibold mb-4 text-slate-800">Create QR Code</h2>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <input
+                  suppressHydrationWarning
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Name / Purpose"
+                  className="w-full border rounded px-3 py-2 text-slate-900"
+                  required
+                />
+                <input
+                  suppressHydrationWarning
+                  type="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="https://example.com"
+                  className="w-full border rounded px-3 py-2 text-slate-900"
+                  required
+                />
+                <button
+                  suppressHydrationWarning
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-cyan-600 text-white py-2 rounded hover:bg-cyan-700 disabled:opacity-50"
+                >
+                  {isLoading ? 'Generating...' : 'Generate QR Code'}
                 </button>
-            </div>
+              </form>
 
-            <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-                <h2 className="text-2xl font-semibold mb-4">Create a New QR Code</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name / Purpose</label>
-                        <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g., My Portfolio Website" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" required />
-                    </div>
-                    <div>
-                        <label htmlFor="url" className="block text-sm font-medium text-gray-700">URL / Link</label>
-                        <input type="url" id="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://example.com" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" required />
-                    </div>
-                    <button type="submit" disabled={isLoading} className="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-400">
-                        {isLoading ? 'Generating...' : 'Generate QR Code'}
-                    </button>
-                </form>
-            </div>
-
-            {generatedQR && (
-                <div className="text-center bg-blue-50 p-6 rounded-lg shadow-md mb-8">
-                    {/* --- BUILD ERROR YAHAN THEEK KIYA GAYA --- */}
-                    <h3 className="text-xl font-semibold mb-2">{`Your New QR Code for "${generatedQR.name}"`}</h3>
-                    {/* --- <img> WARNING THEEK KIYA GAYA --- */}
-                    <Image src={generatedQR.qrCodeImage || ''} alt={`QR Code for ${generatedQR.name}`} className="mx-auto" width={256} height={256} />
-                    <button onClick={handleDownload} className="mt-4 inline-block px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600">
-                        Download
-                    </button>
+              {generatedQR && (
+                <div className="mt-6 text-center">
+                  <Image
+                    src={generatedQR.qrCodeImage ?? ''}
+                    alt={generatedQR.name}
+                    width={200}
+                    height={200}
+                    className="mx-auto"
+                  />
+                  <div className="mt-3 font-medium">{generatedQR.name}</div>
+                  <a
+                    href={generatedQR.qrCodeImage}
+                    download={`${generatedQR.name}.png`}
+                    className="inline-block mt-2 px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
+                  >
+                    Download
+                  </a>
                 </div>
-            )}
-
-            <div>
-                <h2 className="text-3xl font-bold mb-4">Your Saved QR Codes ({pastQRs.length})</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {pastQRs.map((qr) => (
-                        <div key={qr.id} className="bg-white p-4 rounded-lg shadow">
-                            {/* --- <img> WARNING THEEK KIYA GAYA --- */}
-                            <Image src={qr.qrCodeImage || ''} alt={`QR Code for ${qr.name}`} className="w-full h-auto object-cover rounded-md mb-4" width={256} height={256} />
-                            <h3 className="font-bold text-lg truncate">{qr.name}</h3>
-                            <p className="text-gray-500 text-sm truncate">{qr.url}</p>
-                        </div>
-                    ))}
-                </div>
+              )}
             </div>
+
+            {/* Library */}
+            <div className="lg:col-span-2">
+              <h2 className="text-2xl font-semibold mb-4 text-slate-900">Your Library</h2>
+              {isFetchingList ? (
+                <p>Loading...</p>
+              ) : pastQRs.length === 0 ? (
+                <div className="p-6 bg-white rounded text-center text-slate-600 border">
+                  No QR codes yet. Create one!
+                </div>
+              ) : (
+                <div className="grid md:grid-cols-2 gap-6">
+                  {pastQRs.map((qr) => (
+                    <div
+                      key={qr.id}
+                      className="bg-white shadow rounded-lg p-4 flex flex-col items-center"
+                    >
+                      {qr.qrCodeImage ? (
+                        <Image src={qr.qrCodeImage} alt={qr.name} width={180} height={180} />
+                      ) : (
+                        <QrCodeIcon className="h-32 w-32 text-slate-300" />
+                      )}
+                      <div className="mt-3 font-semibold text-slate-900">{qr.name}</div>
+                      <p className="text-sm text-slate-800 truncate w-full text-center">{qr.url}</p>
+                      <div className="mt-3 flex gap-2">
+                        <button
+                          onClick={() => handleCopy(qr.url)}
+                          className="text-slate-700 flex items-center gap-1 px-3 py-1 text-sm border rounded hover:bg-slate-200"
+                        >
+                          {copiedUrl === qr.url ? <CheckIcon className="h-4 w-4 text-green-500" /> : <ClipboardDocumentIcon className="h-4 w-4" />}
+                          {copiedUrl === qr.url ? 'Copied' : 'Copy'}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(qr.id)}
+                          className="flex items-center gap-1 px-3 py-1 text-sm border border-red-300 text-red-600 rounded hover:bg-red-100"
+                        >
+                          <TrashIcon className="h-4 w-4" /> Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-    );
+      </div>
+    </>
+  );
 }

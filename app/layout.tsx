@@ -1,28 +1,39 @@
-// app/layout.tsx
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import AuthProvider from "../components/AuthProvider"; // Naya component import karein
+import { ClerkProvider } from '@clerk/nextjs'
+import { Geist, Geist_Mono } from 'next/font/google'
+import './globals.css'
+import { Metadata } from 'next'
+import ClientLayout from './client-layout'
 
-const inter = Inter({ subsets: ["latin"] });
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+})
+
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+})
 
 export const metadata: Metadata = {
-  title: "QR Code Tracker",
-  description: "Generate and track your QR codes",
-};
+  title: 'Qr Code Generator & Tracker | QRify',
+  description:
+    'Instantly create and track QR codes for your URLs for free. Sign up to manage all your generated QR codes in a personal dashboard.',
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <AuthProvider> {/* Yahan poori app ko wrap karein */}
-          {children}
-        </AuthProvider>
-      </body>
-    </html>
-  );
+    <ClerkProvider>
+      <html lang="en" className="h-full bg-white">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased h-full flex flex-col`}
+        >
+          <ClientLayout>{children}</ClientLayout>
+        </body>
+      </html>
+    </ClerkProvider>
+  )
 }

@@ -9,14 +9,17 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@next-auth/prisma-adapter": "^1.0.7",
+    "@clerk/nextjs": "^6.31.9",
+    "@heroicons/react": "^2.2.0",
     "@prisma/client": "^6.14.0",
+    "@react-email/render": "^1.2.3",
+    "framer-motion": "^12.23.12",
     "next": "15.5.0",
-    "next-auth": "^4.24.11",
     "prisma": "^6.14.0",
     "qrcode": "^1.5.4",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "resend": "^6.0.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
