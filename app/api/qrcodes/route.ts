@@ -7,8 +7,8 @@ function isValidHttpUrl(string: string) {
   try {
     const url = new URL(string);
     return url.protocol === "http:" || url.protocol === "https:";
-  } catch (_) {
-    return false;
+  } catch (error) {
+      return false;
   }
 }
 
@@ -26,7 +26,7 @@ export async function GET() {
     });
 
     return NextResponse.json(qrCodes);
-  } catch (error: any) {
+  } catch (error) {
     console.error("[QRCodes_GET]", JSON.stringify(error));
     return new NextResponse("Internal Server Error", { status: 500 });
   }
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(newQRCode);
-  } catch (error: any) {
+  } catch (error) {
     console.error("[QRCodes_POST]", JSON.stringify(error));
     return new NextResponse("Internal Server Error", { status: 500 });
   }
@@ -93,7 +93,7 @@ export async function DELETE(request: Request) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error) {
     console.error("[QRCodes_DELETE]", JSON.stringify(error));
     return new NextResponse("Internal Server Error", { status: 500 });
   }

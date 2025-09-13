@@ -70,8 +70,8 @@ export default function DashboardPage() {
       );
 
       setPastQRs(withImages);
-    } catch (err) {
-      console.error('Fetch error:', err);
+    } catch (error) {
+      console.error('Fetch error:', error);
       setErrorMessage('Network error while fetching QR codes.');
     } finally {
       setIsFetchingList(false);
