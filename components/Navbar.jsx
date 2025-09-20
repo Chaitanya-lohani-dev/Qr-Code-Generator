@@ -7,10 +7,10 @@ import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { QrCodeIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const navigation = [
+  { name: 'About', href: '/about' }, // Added for consistency with Footer
   { name: 'Features', href: '/features' },
   { name: 'Pricing', href: '/pricing' },
   { name: 'Contact', href: '/contact' },
-  { name: 'About', href: '/about' }, // Added for consistency with Footer
 ];
 
 export default function Navbar() {
