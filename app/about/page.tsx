@@ -45,17 +45,139 @@ export default function AboutPage() {
       {/* Founder Section */}
       <section className="pb-24 sm:pb-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl lg:max-w-4xl">
-                <div className="bg-white p-10 rounded-2xl shadow-lg ring-1 ring-slate-900/5 text-center">
-                    <UserCircleIcon className="mx-auto h-16 w-16 text-slate-400" />
-                    <h2 className="mt-4 text-2xl font-semibold leading-8 text-slate-900">
-                        Built by a Solo Developer
-                    </h2>
-                    <p className="mt-4 text-lg leading-8 text-slate-600">
-                        Hi, I’m <span className="font-semibold text-slate-800">Chaitanya Lohani</span>, the developer behind this project. This platform is not just a project, but a journey of learning, experimenting, and building tools that help others connect better.
-                    </p>
+            <div className="mx-auto max-w-4xl">
+                <div className="bg-white p-10 rounded-2xl shadow-lg ring-1 ring-slate-900/5">
+                    <div className="text-center mb-8">
+                        <UserCircleIcon className="mx-auto h-16 w-16 text-slate-400" />
+                        <h2 className="mt-4 text-2xl font-semibold leading-8 text-slate-900">
+                            Built by a Student Developer
+                        </h2>
+                    </div>
+                    
+                    <div className="space-y-6 text-lg leading-8 text-slate-600">
+                        <p>
+                            Hi, I'm <span className="font-semibold text-slate-800">Chaitanya Lohani</span>, a 3rd year B.Sc(Prog.) Physical Science with Chemistry student from University of Delhi. Despite coming from a non-tech background, I discovered my passion for coding in 11th and 12th grade when I first learned Python.
+                        </p>
+                        
+                        <p>
+                            Currently, I serve as the <span className="font-semibold text-cyan-600">President of IIC (Institution's Innovation Council)</span> at my university. IIC is an initiative under the Ministry of Education that promotes innovation and entrepreneurship among college students. Last year, I was the Tech Head of IIC, where I realized the crucial role QR codes play in student organizations and startups.
+                        </p>
+                        
+                        <p>
+                            From event promotions to registrations, we constantly needed QR codes, but existing tools were either expensive or had limitations that didn't work for students and small businesses. As students, we couldn't afford premium pricing, and many tools would expire our QR codes after a few days.
+                        </p>
+                        
+                        <p className="font-medium text-slate-800">
+                            That's why I created QRify — a free, reliable platform that empowers students, small businesses, and startups to grow without worrying about costs or limitations.
+                        </p>
+                    </div>
                 </div>
             </div>
+        </div>
+      </section>
+
+      {/* Development Journey Section */}
+      <section className="py-16 sm:py-24 bg-slate-50">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl lg:text-center">
+            <h2 className="text-base font-semibold leading-7 text-cyan-600">The Journey</h2>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              From Student to Developer
+            </p>
+            <p className="mt-6 text-lg leading-8 text-slate-600">
+              How a non-tech background led to building a tool that helps others.
+            </p>
+          </div>
+
+          <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
+            <div className="space-y-8">
+              {[
+                {
+                  year: "11th-12th Grade",
+                  title: "First Steps in Coding",
+                  description: "Discovered Python and fell in love with programming, despite being from a science background.",
+                  icon: "🎓"
+                },
+                {
+                  year: "University of Delhi",
+                  title: "B.Sc Physical Science",
+                  description: "Pursuing Chemistry while self-learning computer science and web development.",
+                  icon: "🧪"
+                },
+                {
+                  year: "2024-2025",
+                  title: "Tech Head at IIC",
+                  description: "Led technology initiatives and realized the need for affordable QR code solutions for student organizations.",
+                  icon: "💻"
+                },
+                {
+                  year: "2025-2026",
+                  title: "President at IIC",
+                  description: "Now leading innovation and entrepreneurship initiatives while building QRify to solve real problems.",
+                  icon: "🚀"
+                }
+              ].map((milestone, index) => (
+                <div key={index} className="relative pl-16 transition-all duration-300 hover:scale-105">
+                  <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600">
+                    <span className="text-lg">{milestone.icon}</span>
+                  </div>
+                  <div className="flex items-center gap-4 mb-2">
+                    <h3 className="text-lg font-semibold text-slate-900">{milestone.title}</h3>
+                    <span className="inline-flex items-center rounded-full bg-cyan-100 px-3 py-1 text-sm font-medium text-cyan-800">
+                      {milestone.year}
+                    </span>
+                  </div>
+                  <p className="text-base leading-7 text-slate-600">{milestone.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Vision Section */}
+      <section className="py-16 sm:py-24">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl lg:text-center">
+            <h2 className="text-base font-semibold leading-7 text-cyan-600">The Vision</h2>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              Empowering the Next Generation
+            </p>
+            <p className="mt-6 text-lg leading-8 text-slate-600">
+              Building tools that help students and startups succeed without financial barriers.
+            </p>
+          </div>
+
+          <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+              {[
+                {
+                  title: "For Students",
+                  description: "Free QR codes for college societies, events, and projects. No expiration dates, no hidden costs.",
+                  icon: "🎓",
+                  color: "from-cyan-500 to-blue-600"
+                },
+                {
+                  title: "For Startups",
+                  description: "Affordable solutions for small businesses and entrepreneurs to grow their digital presence.",
+                  icon: "🚀",
+                  color: "from-blue-500 to-indigo-600"
+                }
+              ].map((vision, index) => (
+                <div key={index} className="group relative rounded-xl bg-white p-8 shadow-lg ring-1 ring-slate-900/5 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                  <div className={`inline-flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-r ${vision.color} mb-4`}>
+                    <span className="text-2xl">{vision.icon}</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-900 group-hover:text-cyan-600 transition-colors mb-3">
+                    {vision.title}
+                  </h3>
+                  <p className="text-base leading-7 text-slate-600">
+                    {vision.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -73,7 +195,7 @@ export default function AboutPage() {
               <SignedOut>
                   <Link
                     href="/sign-up"
-                    className="rounded-md bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg hover:from-cyan-600 hover:to-blue-700 transition-all transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500"
+                    className="rounded-md bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg hover:from-cyan-600 hover:to-blue-700 transition-all transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500"
                   >
                     Sign up for free <ArrowRightIcon className="inline h-4 w-4 ml-2"/>
                   </Link>
@@ -81,7 +203,7 @@ export default function AboutPage() {
               <SignedIn>
                   <Link
                     href="/dashboard"
-                    className="rounded-md bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg hover:from-cyan-600 hover:to-blue-700 transition-all transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500"
+                    className="rounded-md bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg hover:from-cyan-600 hover:to-blue-700 transition-all transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500"
                   >
                     Go to your Dashboard <ArrowRightIcon className="inline h-4 w-4 ml-2"/>
                   </Link>

@@ -112,8 +112,22 @@ export default function ContactPage() {
               </h2>
               <p className="mt-6 text-lg leading-8 text-slate-600">
                 Have questions about our plans, features, or anything else? Fill
-                out the form and we’ll get back to you shortly.
+                out the form and we'll get back to you shortly.
               </p>
+              
+              {/* Response Time Info */}
+              <div className="mt-8 p-4 bg-cyan-50 rounded-lg border border-cyan-200">
+                <h3 className="text-sm font-semibold text-cyan-800 mb-2">Response Times</h3>
+                <ul className="text-sm text-cyan-700 space-y-1">
+                  <li>• General inquiries: Within 24 hours</li>
+                  <li>• Student support: Within 12 hours</li>
+                  <li>• Technical issues: Within 6 hours</li>
+                  <li>• Business inquiries: Within 48 hours</li>
+                </ul>
+                <p className="text-xs text-cyan-600 mt-2">
+                  💡 Students with .edu email addresses get priority support and enhanced features!
+                </p>
+              </div>
               <dl className="mt-10 space-y-4 text-base leading-7 text-slate-600">
                 <div className="flex gap-x-4 items-center">
                   <BuildingOffice2Icon
@@ -126,16 +140,16 @@ export default function ContactPage() {
                   </dd>
                 </div>
                 <div className="flex gap-x-4 items-center">
-                  <PhoneIcon
+                  <EnvelopeIcon
                     className="h-7 w-6 text-cyan-600"
                     aria-hidden="true"
                   />
                   <dd>
                     <a
                       className="hover:text-slate-900"
-                      href="tel:+911234567890"
+                      href="mailto:chaitanyalohani175@gmail.com"
                     >
-                      +91 12345 67890
+                      chaitanyalohani175@gmail.com
                     </a>
                   </dd>
                 </div>
@@ -259,7 +273,7 @@ export default function ContactPage() {
                     >
                       By selecting this, you agree to our{" "}
                       <a
-                        href="#"
+                        href="/privacy-policy"
                         className="font-semibold text-cyan-600 hover:underline"
                       >
                         privacy&nbsp;policy
@@ -304,7 +318,7 @@ export default function ContactPage() {
                   <button
                     type="submit"
                     disabled={!agreed || isLoading}
-                    className="flex items-center gap-2 rounded-md bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:from-cyan-600 hover:to-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 transition-all transform hover:scale-105 disabled:opacity-50 disabled:scale-100"
+                    className="flex items-center gap-2 rounded-md bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:from-cyan-600 hover:to-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 transition-all transform hover:scale-105 disabled:opacity-50 disabled:scale-100"
                   >
                     {isLoading && (
                       <svg

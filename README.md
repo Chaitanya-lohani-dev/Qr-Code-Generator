@@ -1,41 +1,110 @@
-<<<<<<< HEAD
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# QRify – QR Code Management & Verification Platform
 
-## Getting Started
+QRify is a fullstack QR code generation and management platform built with Next.js (App Router), PostgreSQL, and Prisma ORM.
 
-First, run the development server:
+It allows authenticated users to generate, manage, and organize dynamic QR codes while supporting student verification and subscription-based access control.
+
+---
+
+## 🚀 Features
+
+- 🔐 Authentication powered by Clerk
+- 📦 Dynamic QR Code generation
+- 📚 Personal QR code library
+- 📊 PostgreSQL database with Prisma ORM
+- ✉ OTP-based student verification workflow
+- 🧾 Subscription model structure (Free / Pro / Startup)
+- 📬 Email integration using Resend
+- 🌍 Deployed on Vercel
+
+---
+
+## 🏗 Tech Stack
+
+### Frontend & Backend
+- Next.js (App Router)
+- TypeScript
+
+### Authentication
+- Clerk
+
+### Database
+- PostgreSQL
+- Prisma ORM
+
+### Email Service
+- Resend
+
+### Deployment
+- Vercel
+
+---
+
+## 📁 Project Structure
+
+- `app/` – App Router pages and API routes
+- `components/` – Reusable UI components
+- `prisma/` – Database schema and migrations
+- `lib/prisma.ts` – Prisma client configuration
+
+---
+
+## 🗄 Database Models
+
+- **QRCode** – Stores user-generated QR entries
+- **StudentVerification** – Handles OTP-based email verification
+- **Subscription** – Manages user subscription tiers
+
+Indexed fields are used for optimized user-based queries.
+
+---
+
+## 🛠 API Routes
+
+- `GET /api/qrcodes` – Fetch user QR codes
+- `POST /api/qrcodes` – Create new QR code
+- `DELETE /api/qrcodes` – Delete QR code (ownership validated)
+- OTP verification endpoints under `/api/student/*`
+
+---
+
+## 🧠 Architecture Highlights
+
+- User-scoped data isolation using Clerk authentication
+- Server-side input validation
+- Ownership checks before data deletion
+- Indexed relational queries for performance
+- Separation between UI layer and API layer
+
+---
+
+## ⚙️ Setup & Installation
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Configure environment variables:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+DATABASE_URL=
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+RESEND_API_KEY=
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🌐 Live Deployment
 
-To learn more about Next.js, take a look at the following resources:
+Application is deployed on Vercel.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📌 Future Enhancements
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-=======
-# Qr-Code-Generator
-Qr Code generator for Team IIC
->>>>>>> b856d58a894603586998ac715446c7442ee70a37
+- Advanced QR analytics dashboard
+- Payment gateway integration
+- Role-based access controls
+- Usage-based subscription enforcement

@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { CheckIcon } from "@heroicons/react/20/solid";
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
+import StudentVerification from "@/components/StudentVerification";
 
 const tiers = [
   {
@@ -13,42 +14,44 @@ const tiers = [
     id: "tier-free",
     href: "/sign-up",
     price: { monthly: "₹0", annually: "₹0" },
-    description: "Perfect for individuals and personal projects to get started.",
+    description: "Perfect for individuals and small projects to get started.",
     features: [
       "5 QR Codes per month",
-      "Basic tracking dashboard",
-      "Standard email support",
+      "1 Customizable QR per month",
+      "Personal dashboard",
       "High-quality PNG downloads",
+      "Basic support",
     ],
     mostPopular: false,
   },
   {
-    name: "Pro",
-    id: "tier-pro",
-    href: "/sign-up", // Replace with payment link later
-    price: { monthly: "₹499", annually: "₹4,999" },
-    description: "For professionals and small businesses who need more power.",
+    name: "Student Pro",
+    id: "tier-student",
+    href: "/contact",
+    price: { monthly: "₹199", annually: "₹1,999" },
+    description: "Enhanced features for professionals. FREE for verified students with .edu email.",
     features: [
       "Unlimited QR Codes",
-      "Advanced analytics & tracking",
-      "Priority email & chat support",
-      "Custom branding on QR codes",
-      "API Access",
+      "Unlimited customizable QR codes",
+      "Advanced analytics (Coming Soon)",
+      "Bulk generation (Coming Soon)",
+      "Priority support",
+      "FREE with .edu email verification",
     ],
     mostPopular: true,
   },
   {
-    name: "Business",
-    id: "tier-business",
+    name: "Startup",
+    id: "tier-startup",
     href: "/contact",
-    price: { monthly: "₹1,999", annually: "₹19,999" },
-    description: "For large teams and companies needing advanced features.",
+    price: { monthly: "₹499", annually: "₹4,999" },
+    description: "For startups and businesses - 50% less than competitors.",
     features: [
-      "Everything in Pro, plus:",
-      "Team collaboration features",
-      "Dedicated account manager",
-      "Custom integrations",
-      "Enterprise-grade security",
+      "Everything in Student Pro, plus:",
+      "API access (Coming Soon)",
+      "Team collaboration (Coming Soon)",
+      "Custom integrations (Coming Soon)",
+      "Dedicated support",
     ],
     mostPopular: false,
   },
@@ -60,15 +63,57 @@ function classNames(...classes) {
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState("monthly");
+  const [studentStatus, setStudentStatus] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { user, isLoaded } = useUser();
+
+  // Check student verification status
+  useEffect(() => {
+    if (isLoaded && user) {
+      checkStudentStatus();
+    } else {
+      setLoading(false);
+    }
+  }, [isLoaded, user]);
+
+  const checkStudentStatus = async () => {
+    try {
+      const response = await fetch('/api/student/status');
+      if (response.ok) {
+        const data = await response.json();
+        setStudentStatus(data);
+      }
+    } catch (error) {
+      console.error('Error checking student status:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Get display price based on student verification status
+  const getDisplayPrice = (tier) => {
+    if (tier.id === 'tier-student' && studentStatus?.isStudentVerified) {
+      return '₹0';
+    }
+    return tier.price[billingCycle];
+  };
+
+  // Get display period based on student verification status
+  const getDisplayPeriod = (tier) => {
+    if (tier.id === 'tier-student' && studentStatus?.isStudentVerified) {
+      return '/forever';
+    }
+    return `/${billingCycle === "monthly" ? "month" : "year"}`;
+  };
 
   return (
     <>
       {/* SEO Tags */}
       <Head>
-        <title>Pricing | QR SaaS</title>
+        <title>Pricing | QRify</title>
         <meta
           name="description"
-          content="Simple, transparent pricing for QR code generation and analytics. Get started free or upgrade for pro features."
+          content="Free QR code generation for students and startups. Simple, transparent pricing with no hidden costs."
         />
       </Head>
 
@@ -80,12 +125,11 @@ export default function PricingPage() {
               Pricing
             </h2>
             <p className="mt-2 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-              Simple, transparent pricing for everyone
+              Affordable pricing for everyone
             </p>
           </div>
           <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-slate-600">
-            Choose the plan that's right for you. Get started for free, and
-            upgrade whenever you need more power.
+            Free for students, affordable for startups. Built by a student, for the community.
           </p>
 
           {/* Billing cycle toggle */}
@@ -113,6 +157,15 @@ export default function PricingPage() {
               >
                 Annually <span className="ml-1 text-xs text-green-600">Save 15%</span>
               </button>
+            </div>
+          </div>
+
+          {/* Student Highlight */}
+          <div className="mt-6 flex justify-center">
+            <div className="inline-flex items-center rounded-full bg-gradient-to-r from-cyan-50 to-blue-50 px-6 py-3 ring-1 ring-cyan-200">
+              <span className="text-sm font-medium text-cyan-800">
+                🎓 Students with .edu email get Student Pro plan FREE forever
+              </span>
             </div>
           </div>
 
@@ -149,10 +202,10 @@ export default function PricingPage() {
                 </p>
                 <p className="mt-6 flex items-baseline gap-x-1">
                   <span className="text-4xl font-bold tracking-tight text-slate-900">
-                    {tier.price[billingCycle]}
+                    {getDisplayPrice(tier)}
                   </span>
                   <span className="text-sm font-semibold leading-6 text-slate-600">
-                    /{billingCycle === "monthly" ? "month" : "year"}
+                    {getDisplayPeriod(tier)}
                   </span>
                 </p>
 
@@ -165,14 +218,14 @@ export default function PricingPage() {
                       tier.mostPopular
                         ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-sm hover:from-cyan-600 hover:to-blue-700"
                         : "text-cyan-600 ring-1 ring-inset ring-cyan-200 hover:ring-cyan-300",
-                      "mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 transition-all"
+                      "mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 transition-all"
                     )}
                   >
                     {tier.id === "tier-free"
-                      ? "Continue with Free"
-                      : tier.id === "tier-pro"
-                      ? "Upgrade to Pro"
-                      : "Contact Sales"}
+                      ? "Go to Dashboard"
+                      : tier.id === "tier-student"
+                      ? "Get Student Pro"
+                      : "Get Startup Plan"}
                   </Link>
                 </SignedIn>
 
@@ -184,14 +237,14 @@ export default function PricingPage() {
                       tier.mostPopular
                         ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-sm hover:from-cyan-600 hover:to-blue-700"
                         : "text-cyan-600 ring-1 ring-inset ring-cyan-200 hover:ring-cyan-300",
-                      "mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 transition-all"
+                      "mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 transition-all"
                     )}
                   >
                     {tier.id === "tier-free"
                       ? "Start Free"
-                      : tier.id === "tier-pro"
-                      ? "Upgrade to Pro"
-                      : "Contact Sales"}
+                      : tier.id === "tier-student"
+                      ? "Get Student Pro"
+                      : "Get Startup Plan"}
                   </Link>
                 </SignedOut>
 
@@ -213,9 +266,19 @@ export default function PricingPage() {
             ))}
           </div>
 
+          {/* Student Verification Section */}
+          <div className="mt-16">
+            <div className="mx-auto max-w-2xl">
+              <h3 className="text-center text-2xl font-bold text-slate-900 mb-8">
+                🎓 Student Verification
+              </h3>
+              <StudentVerification />
+            </div>
+          </div>
+
           {/* Trust note */}
           <p className="mt-12 text-center text-sm text-slate-500">
-            14-day money-back guarantee. No hidden fees.
+            Students with .edu email get Student Pro FREE. All plans include 14-day money-back guarantee.
           </p>
         </div>
       </div>
