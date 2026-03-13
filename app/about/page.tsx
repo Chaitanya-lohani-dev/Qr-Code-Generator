@@ -35,7 +35,7 @@ export default function AboutPage() {
               <RocketLaunchIcon className="mx-auto h-12 w-12 text-cyan-500"/>
               <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">My Mission</h2>
               <p className="mt-6 text-lg leading-8 text-slate-600">
-                I started this platform with a simple idea: make digital connections effortless. Whether you’re sharing content, promoting your work, or running a business, QR codes should be simple, secure, and scalable. This project is a step toward making that vision a reality.
+                I started this platform with a simple idea: make digital connections effortless. Whether you&rsquo;re sharing content, promoting your work, or running a business, QR codes should be simple, secure, and scalable. This project is a step toward making that vision a reality.
               </p>
             </div>
           </div>
@@ -56,19 +56,19 @@ export default function AboutPage() {
                     
                     <div className="space-y-6 text-lg leading-8 text-slate-600">
                         <p>
-                            Hi, I'm <span className="font-semibold text-slate-800">Chaitanya Lohani</span>, a 3rd year B.Sc(Prog.) Physical Science with Chemistry student from University of Delhi. Despite coming from a non-tech background, I discovered my passion for coding in 11th and 12th grade when I first learned Python.
+                        Hi, I&rsquo;m <span className="font-semibold text-slate-800">Chaitanya Lohani</span>, a 3rd year B.Sc(Prog.) Physical Science with Chemistry student from University of Delhi. Despite coming from a non-tech background, I discovered my passion for coding in 11th and 12th grade when I first learned Python.
                         </p>
                         
                         <p>
-                            Currently, I serve as the <span className="font-semibold text-cyan-600">President of IIC (Institution's Innovation Council)</span> at my university. IIC is an initiative under the Ministry of Education that promotes innovation and entrepreneurship among college students. Last year, I was the Tech Head of IIC, where I realized the crucial role QR codes play in student organizations and startups.
+                        Currently, I serve as the <span className="font-semibold text-cyan-600">President of IIC (Institution&rsquo;s Innovation Council)</span> at my university. IIC is an initiative under the Ministry of Education that promotes innovation and entrepreneurship among college students. Last year, I was the Tech Head of IIC, where I realized the crucial role QR codes play in student organizations and startups.
                         </p>
                         
                         <p>
-                            From event promotions to registrations, we constantly needed QR codes, but existing tools were either expensive or had limitations that didn't work for students and small businesses. As students, we couldn't afford premium pricing, and many tools would expire our QR codes after a few days.
+                        From event promotions to registrations, we constantly needed QR codes, but existing tools were either expensive or had limitations that didn&rsquo;t work for students and small businesses. As students, we couldn&rsquo;t afford premium pricing, and many tools would expire our QR codes after a few days.
                         </p>
                         
                         <p className="font-medium text-slate-800">
-                            That's why I created QRify — a free, reliable platform that empowers students, small businesses, and startups to grow without worrying about costs or limitations.
+                        That&rsquo;s why I created QRify — a free, reliable platform that empowers students, small businesses, and startups to grow without worrying about costs or limitations.
                         </p>
                     </div>
                 </div>

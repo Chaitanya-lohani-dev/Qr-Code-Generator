@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { CheckCircleIcon, XCircleIcon, ClockIcon } from '@heroicons/react/24/outline';
@@ -155,12 +156,12 @@ export default function StudentVerification() {
     return (
       <div className="text-center p-4">
         <p className="text-slate-600 mb-4">Please sign in to verify your student status</p>
-        <a 
-          href="/sign-in" 
+        <Link
+          href="/sign-in"
           className="inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors"
         >
           Sign In
-        </a>
+        </Link>
       </div>
     );
   }
